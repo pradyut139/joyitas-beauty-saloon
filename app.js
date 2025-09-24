@@ -161,7 +161,8 @@ let appState = {
   editingService: null,
   cartVisible: false
 };
-//firebaseConfig
+
+// Mock Firebase functionality (since we can't use real Firebase without config)
 const firebaseConfig = {
   apiKey: "AIzaSyDSw6BqdgEwq6XtCIZ4PN7E6JJ5g0ZZvb0",
   authDomain: "joyitas-beauty-saloon.firebaseapp.com",
