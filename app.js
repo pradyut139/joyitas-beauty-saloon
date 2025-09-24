@@ -161,13 +161,7 @@ let appState = {
   editingService: null,
   cartVisible: false
 };
-
-/// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
+//firebaseConfig
 const firebaseConfig = {
   apiKey: "AIzaSyDSw6BqdgEwq6XtCIZ4PN7E6JJ5g0ZZvb0",
   authDomain: "joyitas-beauty-saloon.firebaseapp.com",
@@ -177,9 +171,6 @@ const firebaseConfig = {
   messagingSenderId: "706560769170",
   appId: "1:706560769170:web:2a70e5a79634d3c6517a4b"
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 
   // Simulate Firebase database operations
   ref(path) {
