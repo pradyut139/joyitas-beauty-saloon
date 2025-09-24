@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joyita's Beauty Saloon - Where Beauty Meets Excellence</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#EC4899">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Joyita's Beauty">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getDatabase } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+        window.firebaseModules = { initializeApp, getDatabase };
+    </script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">💅</div>
+            <h2>Joyita's Beauty Saloon</h2>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Customer App -->
+    <div id="customer-app" class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1 class="salon-name">💅 Joyita's Beauty Saloon</h1>
+                    <p class="tagline">Where Beauty Meets Excellence</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn--secondary" id="admin-login-btn">Admin</button>
+                    <div class="cart-icon" id="cart-icon">
+                        🛒 <span class="cart-count" id="cart-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="category-nav" id="category-nav">
+            <div class="nav-scroll">
+                <button class="nav-item active" data-category="all">All Services</button>
+            </div>
+        </nav>
+
+        <!-- Services Section -->
+        <main class="main-content">
+            <div class="container">
+                <section class="services-section">
+                    <div class="services-grid" id="services-grid">
+                        <!-- Services will be populated by JavaScript -->
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Cart Summary -->
+        <div class="cart-summary hidden" id="cart-summary">
+            <div class="cart-content">
+                <h3>Selected Services</h3>
+                <div class="cart-items" id="cart-items"></div>
+                <div class="cart-total">
+                    <strong>Total: ₹<span id="cart-total">0</span></strong>
+                </div>
+                <div class="cart-actions">
+                    <button class="btn btn--secondary" id="clear-cart">Clear Cart</button>
+                    <button class="btn btn--primary" id="book-appointment">Book Appointment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal hidden" id="admin-login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Admin Login</h3>
+                <button class="modal-close" id="close-admin-login">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" id="admin-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="admin-password" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal hidden" id="booking-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Book Appointment</h3>
+                <button class="modal-close" id="close-booking">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="booking-form">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="customer-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="customer-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="customer-email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Appointment Date</label>
+                        <input type="date" class="form-control" id="appointment-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Preferred Time</label>
+                        <select class="form-control" id="appointment-time" required>
+                            <option value="">Select Time</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Special Notes (Optional)</label>
+                        <textarea class="form-control" id="special-notes" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">Confirm Booking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-app" class="app-container hidden">
+        <!-- Admin Header -->
+        <header class="app-header admin-header">
+            <div class="header-content">
+                <h1>Admin Dashboard</h1>
+                <button class="btn btn--secondary" id="admin-logout">Logout</button>
+            </div>
+        </header>
+
+        <!-- Admin Navigation -->
+        <nav class="admin-nav">
+            <button class="admin-nav-item active" data-section="services">Manage Services</button>
+            <button class="admin-nav-item" data-section="bookings">View Bookings</button>
+            <button class="admin-nav-item" data-section="customers">Customer Data</button>
+            <button class="admin-nav-item" data-section="analytics">Analytics</button>
+        </nav>
+
+        <!-- Admin Content -->
+        <main class="admin-content">
+            <!-- Services Management -->
+            <section id="admin-services" class="admin-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Manage Services</h2>
+                        <button class="btn btn--primary" id="add-service-btn">Add New Service</button>
+                    </div>
+                    
+                    <div class="admin-categories" id="admin-categories">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bookings Management -->
+            <section id="admin-bookings" class="admin-section hidden">
+                <div class="container">
+                    <h2>Appointment Bookings</h2>
+                    <div class="bookings-list" id="bookings-list">
+                        <!-- Bookings will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customer Data -->
+            <section id="admin-customers" class="admin-section hidden">
+                <div class="container">
+                    <h2>Customer Database</h2>
+                    <div class="customers-list" id="customers-list">
+                        <!-- Customers will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics -->
+            <section id="admin-analytics" class="admin-section hidden">
+                <div class="container">
+                    <h2>Business Analytics</h2>
+                    <div class="analytics-grid">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Total Bookings</h3>
+                                <div class="metric-value" id="total-bookings">0</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Total Revenue</h3>
+                                <div class="metric-value">₹<span id="total-revenue">0</span></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Total Customers</h3>
+                                <div class="metric-value" id="total-customers">0</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Popular Service</h3>
+                                <div class="metric-text" id="popular-service">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add/Edit Service Modal -->
+    <div class="modal hidden" id="service-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="service-modal-title">Add New Service</h3>
+                <button class="modal-close" id="close-service-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="service-form">
+                    <div class="form-group">
+                        <label class="form-label">Service Name</label>
+                        <input type="text" class="form-control" id="service-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" id="service-category" required>
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Price (₹)</label>
+                        <input type="number" class="form-control" id="service-price" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration (minutes)</label>
+                        <input type="number" class="form-control" id="service-duration" required min="15" step="15">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="service-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="service-popular"> Popular Service
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">Save Service</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div class="toast hidden" id="toast">
+        <div class="toast-content" id="toast-content"></div>
+    </div>
+
+    <!-- Contact Information Footer -->
+    <footer class="app-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="contact-info">
+                    <p>📍 123 Beauty Street, Hyderabad, Telangana 500001</p>
+                    <p>📞 +91 9876543210</p>
+                    <p>📧 info@joyitasbeauty.com</p>
+                    <p>🕒 9:00 AM - 8:00 PM</p>
+                </div>
+                <div class="social-links">
+                    <a href="#" target="_blank">📷 @joyitasbeauty</a>
+                    <a href="#" target="_blank">📘 JoyitasBeautySaloon</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
