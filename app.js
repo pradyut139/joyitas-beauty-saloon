@@ -165,14 +165,16 @@ let appState = {
 // Mock Firebase functionality (since we can't use real Firebase without config)
 // TODO: Replace with your Firebase config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com/",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDSw6BqdgEwq6XtCIZ4PN7E6JJ5g0ZZvb0",
+  authDomain: "joyitas-beauty-saloon.firebaseapp.com",
+  databaseURL: "https://joyitas-beauty-saloon-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "joyitas-beauty-saloon",
+  storageBucket: "joyitas-beauty-saloon.firebasestorage.app",
+  messagingSenderId: "706560769170",
+  appId: "1:706560769170:web:d8e256f8e55ea74a517a4b"
 };
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 
   // Simulate Firebase database operations
